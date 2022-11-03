@@ -7,84 +7,65 @@ namespace qwerty
     {
         static void Main(string[] args)
         {
-            int lengthOfArray = 0;
+            int arrayLength = 0;
             bool isInt;
 
             Console.Write("Введите длину массива: ");
-            isInt = int.TryParse(Console.ReadLine(), out lengthOfArray);
+            doInt(ref arrayLength);
 
-            while (!isInt || lengthOfArray <= 0)
-            {
-                Console.Write("\nВведите корректное число ");
-                isInt = int.TryParse(Console.ReadLine(), out lengthOfArray);
-            }
-
-            int[] array = new int[lengthOfArray];
+            int[] array = new int[arrayLength];
             Random random = new Random();
-
-            Console.WriteLine("\nВаш массив: ");
-
-            for (int i = 0; i < lengthOfArray; i++)
-            {
-                array[i] = random.Next(10, 100);
-                Console.Write($"{array[i]} ");
-            }
-
-            Shuffle(ref array, random);
-            Console.WriteLine("\nМассив после перемешки");
-
-            for (int i = 0; i < lengthOfArray; i++)
-            {
-                Console.Write($"{array[i]} ");
-            }
-
-            Console.ReadKey();
-        }
-
-        static void Shuffle(ref int[] array, Random random)
-        {
-            int[] arrayToShuffleIndex = new int[array.Length];
-            int[] arrayToShuffle = new int[array.Length];
-
-            for (int i = 0; i <array.Length; i++)
-            {
-                arrayToShuffleIndex[i] = -1;
-            }
 
             for (int i = 0; i < array.Length; i++)
             {
-                bool isOne = false;
+                array[i] = random.Next(10, 100);
+            }
 
-                arrayToShuffleIndex[i] = random.Next(array.Length);
+            Console.WriteLine("\nВаш массив: ");
+            writeArray(array);
+            Shuffle(ref array, random);
+            Console.WriteLine("\nМассив после перемешки");
+            writeArray(array);
+            Console.ReadKey();
+        }
 
-                if (i == 0)
+        static void doInt(ref int digit)
+        {
+            bool isInt;
+
+            isInt = int.TryParse(Console.ReadLine(), out digit);
+
+            while (!isInt || digit <= 0)
+            {
+                Console.Write("\nВведите корректное число ");
+                isInt = int.TryParse(Console.ReadLine(), out digit);
+            }
+        }
+
+        static void writeArray(int[] array)
+        {
+            for (int i = 0; i < array.Length; i++)
+            {
+                Console.Write($"{array[i]} ");
+            }
+        }
+        
+        static void Shuffle(ref int[] array, Random random)
+        {
+            int[] arrayCopied = array;
+            int[] arrayToShuffle = new int[array.Length];
+            int index = 0;
+            
+            while (index != array.Length)
+            {
+                int randomIndex = random.Next(array.Length);
+
+                if (arrayCopied[randomIndex] != 0)
                 {
-                    isOne = true;
+                    arrayToShuffle[index] = arrayCopied[randomIndex];
+                    arrayCopied[randomIndex] = 0;
+                    index += 1;
                 }
-
-                while (!isOne)
-                {
-                    int countOfIndex = 0;
-
-                    for (int j = 0; j < array.Length; j++)
-                    {
-                        if (arrayToShuffleIndex[i] == arrayToShuffleIndex[j])
-                        {
-                            countOfIndex += 1;
-                        }
-                    }
-
-                    if (countOfIndex == 1)
-                    {
-                        isOne = true;
-                    }
-                    else
-                    {
-                        arrayToShuffleIndex[i] = random.Next(array.Length);
-                    }
-                }
-
-                arrayToShuffle[i] = array[arrayToShuffleIndex[i]];
             }
 
             array = arrayToShuffle;
